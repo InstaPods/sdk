@@ -1,13 +1,14 @@
 ---
-name: instapods-deploy
+name: instapods-cli
 description: >
-  Deploy and debug applications on InstaPods. Handles first deploy,
-  redeployment, failed deploy debugging, log analysis, and database setup.
-  Use when deploying apps, checking pod status, viewing logs, or debugging issues.
+  Deploy and debug applications on InstaPods using the instapods CLI.
+  Handles first deploy, redeployment, failed deploy debugging, log analysis,
+  and database setup. Use when deploying apps, checking pod status, viewing
+  logs, or debugging issues via the command line.
 allowed-tools: Bash(instapods *)
 ---
 
-# InstaPods Deploy & Debug
+# InstaPods CLI — Deploy & Debug
 
 Deploy apps to InstaPods and debug issues using the `instapods` CLI.
 
@@ -101,7 +102,7 @@ Use when the pod already exists and the user has updated code.
 instapods deploy NAME
 ```
 
-The deploy command detects the existing pod, skips creation, syncs changed files, and reloads. Output shows "Pod exists (nodejs - running)".
+The deploy command detects the existing pod, skips creation, syncs changed files, and reloads. Output shows "Pod exists (nodejs · running)".
 
 If only syncing files without reloading:
 
@@ -229,10 +230,7 @@ instapods pods reload NAME
 - Check for `MODULE_NOT_FOUND` — run reload to install deps
 
 ```bash
-# Check environment
 instapods exec NAME -- env | grep -i port
-
-# Reinstall dependencies
 instapods pods reload NAME
 ```
 
@@ -243,10 +241,7 @@ instapods pods reload NAME
 - Check for import errors in logs
 
 ```bash
-# Check if gunicorn is installed
 instapods exec NAME -- /home/instapod/app/venv/bin/pip list | grep gunicorn
-
-# Check app module
 instapods exec NAME -- ls /home/instapod/app/
 ```
 
@@ -262,7 +257,6 @@ instapods exec NAME -- cat /var/log/nginx/error.log | tail -20
 
 **Static site showing default page:**
 - Ensure `index.html` is in `/home/instapod/app/`
-- Check file listing
 
 ```bash
 instapods exec NAME -- ls -la /home/instapod/app/
@@ -442,7 +436,7 @@ instapods pods reload NAME
 | Connect git repo | `instapods git connect NAME --repo URL` |
 | Trigger git deploy | `instapods git deploy NAME` |
 
-### CLI Output Flags
+### CLI Flags
 
 | Flag | Effect |
 |------|--------|
@@ -453,10 +447,10 @@ instapods pods reload NAME
 
 ## Important Notes
 
-- **App root**: All app files live in `/home/instapod/app/`. This is the working directory for services.
+- **App root**: All app files live in `/home/instapod/app/`.
 - **User context**: Commands via `instapods exec` run as the `instapod` user (not root).
-- **`.env` handling**: The deploy command excludes `.env` by default. Upload it separately with `instapods files write`.
+- **`.env` handling**: Deploy excludes `.env` by default. Upload separately with `instapods files write`.
 - **Port binding**: Node.js and Python apps MUST bind to `0.0.0.0` (not `127.0.0.1`). Use `process.env.PORT` for Node.js, `0.0.0.0:8000` for Python.
-- **Reload vs restart**: Use `reload` to reinstall dependencies and restart services. Use `restart` for a quick container restart without dependency installation.
+- **Reload vs restart**: `reload` reinstalls deps and restarts services. `restart` does a quick container restart without dep installation.
 - **Excluded files**: Deploy excludes `node_modules`, `vendor`, `.git`, `.env`, `__pycache__`, `.DS_Store`, `.venv`, `venv` by default. Customize with `--exclude`.
-- **Pod names**: Must be DNS-safe, lowercase, max 63 characters. Letters, numbers, and hyphens only.
+- **Pod names**: DNS-safe, lowercase, max 63 characters. Letters, numbers, and hyphens only.

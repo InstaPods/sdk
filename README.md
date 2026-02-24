@@ -8,7 +8,7 @@ InstaPods is container hosting for developers — deploy Node.js, Python, PHP, a
 
 ### Claude Code (CLI Skill)
 
-A skill file that teaches Claude Code how to deploy and debug apps using the `instapods` CLI.
+A skill that teaches Claude Code how to deploy and debug apps using the `instapods` CLI.
 
 **Setup:**
 
@@ -20,9 +20,9 @@ A skill file that teaches Claude Code how to deploy and debug apps using the `in
 
 2. Copy the skill to your project:
    ```bash
-   mkdir -p .claude/skills/instapods-deploy
-   curl -fsSL https://raw.githubusercontent.com/instapods/sdk/main/skills/instapods-deploy/SKILL.md \
-     -o .claude/skills/instapods-deploy/SKILL.md
+   mkdir -p .claude/skills/instapods-cli
+   curl -fsSL https://raw.githubusercontent.com/instapods/sdk/main/skills/instapods-cli/SKILL.md \
+     -o .claude/skills/instapods-cli/SKILL.md
    ```
 
 3. Ask Claude Code to deploy:
@@ -32,13 +32,20 @@ A skill file that teaches Claude Code how to deploy and debug apps using the `in
    > add a PostgreSQL database to my pod
    ```
 
-The skill teaches Claude the full deploy and debug workflow — preset detection, file sync, dependency installation, log analysis, and database setup.
+### Claude Desktop / Claude.ai (MCP Skill)
 
-### Claude Desktop / Claude.ai (MCP Server)
+Two options — use the MCP skill for guided workflows, or connect directly via MCP.
 
-Connect Claude Desktop or Claude.ai directly to the InstaPods API via MCP (Model Context Protocol).
+**Option A: MCP Skill (recommended)**
 
-**Setup:**
+Copy the skill to your project:
+```bash
+mkdir -p .claude/skills/instapods-mcp
+curl -fsSL https://raw.githubusercontent.com/instapods/sdk/main/skills/instapods-mcp/SKILL.md \
+  -o .claude/skills/instapods-mcp/SKILL.md
+```
+
+**Option B: Direct MCP connection**
 
 Add to your Claude Desktop config (`~/Library/Application Support/Claude/claude_desktop_config.json`):
 
@@ -54,7 +61,7 @@ Add to your Claude Desktop config (`~/Library/Application Support/Claude/claude_
 
 On first use, Claude will walk you through OAuth authentication. See [mcp/README.md](mcp/README.md) for the full setup guide.
 
-Use the built-in prompts:
+The MCP server includes built-in prompts:
 - **deploy-app** — Guided deployment workflow
 - **debug-pod** — Systematic pod diagnosis
 - **getting-started** — Overview of available tools and resources
@@ -65,10 +72,12 @@ Use the built-in prompts:
 sdk/
 ├── README.md                              # This file
 ├── skills/
-│   └── instapods-deploy/
-│       └── SKILL.md                       # Claude Code skill
+│   ├── instapods-cli/
+│   │   └── SKILL.md                       # Skill for Claude Code (uses CLI)
+│   └── instapods-mcp/
+│       └── SKILL.md                       # Skill for Claude Desktop/Claude.ai (uses MCP tools)
 ├── mcp/
-│   └── README.md                          # MCP setup guide for Claude Desktop
+│   └── README.md                          # MCP server setup guide
 └── cli/
     └── README.md                          # CLI quick reference
 ```
