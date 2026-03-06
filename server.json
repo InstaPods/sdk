@@ -1,0 +1,18 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "com.instapods/instapods",
+  "title": "InstaPods",
+  "description": "Deploy and manage cloud servers from AI agents. Create pods, push code, run commands — all via MCP.",
+  "version": "1.0.0",
+  "websiteUrl": "https://instapods.com",
+  "repository": {
+    "url": "https://github.com/InstaPods/sdk",
+    "source": "github"
+  },
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://app.instapods.com/api/mcp"
+    }
+  ]
+}
