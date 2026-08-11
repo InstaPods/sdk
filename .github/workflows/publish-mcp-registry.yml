@@ -1,0 +1,72 @@
+name: Publish to MCP Registry
+
+# Publishes server.json to the official MCP Registry (registry.modelcontextprotocol.io).
+#
+# Trigger: push a tag `mcp-v<version>` matching the `version` in server.json,
+# e.g. `git tag mcp-v1.1.0 && git push origin mcp-v1.1.0`. Or run manually.
+#
+# Auth: the registry namespace `com.instapods/*` is domain-based, so this uses
+# HTTP proof against https://instapods.com/.well-known/mcp-registry-auth
+# (source: website/public/.well-known/mcp-registry-auth in the product repo).
+# GitHub OIDC is NOT usable here - it only grants the `io.github.*` namespace.
+#
+# Requires repo secret MCP_REGISTRY_PRIVATE_KEY: the hex-encoded Ed25519 private
+# key whose public key is published in that well-known file.
+
+on:
+  push:
+    tags:
+      - 'mcp-v*'
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check server.json version matches the tag
+        if: startsWith(github.ref, 'refs/tags/mcp-v')
+        run: |
+          tag_version="${GITHUB_REF_NAME#mcp-v}"
+          file_version="$(jq -r .version server.json)"
+          if [ "$tag_version" != "$file_version" ]; then
+            echo "tag is mcp-v${tag_version} but server.json version is ${file_version}" >&2
+            exit 1
+          fi
+
+      - name: Check the domain proof is live
+        # The registry fetches this file during login. If the marketing site was
+        # redeployed without it, fail here with a clear message rather than in login.
+        run: |
+          proof="$(curl -fsS https://instapods.com/.well-known/mcp-registry-auth)"
+          case "$proof" in
+            "v=MCPv1;"*) echo "proof record present" ;;
+            *) echo "unexpected proof record at instapods.com: ${proof}" >&2; exit 1 ;;
+          esac
+
+      - name: Install mcp-publisher
+        run: |
+          curl -fsSL "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_linux_amd64.tar.gz" \
+            | tar xz mcp-publisher
+          sudo mv mcp-publisher /usr/local/bin/
+          mcp-publisher --version || true
+
+      - name: Log in to the registry
+        env:
+          MCP_REGISTRY_PRIVATE_KEY: ${{ secrets.MCP_REGISTRY_PRIVATE_KEY }}
+        run: |
+          if [ -z "${MCP_REGISTRY_PRIVATE_KEY}" ]; then
+            echo "secret MCP_REGISTRY_PRIVATE_KEY is not set" >&2
+            exit 1
+          fi
+          mcp-publisher login http --domain instapods.com --private-key "${MCP_REGISTRY_PRIVATE_KEY}"
+
+      - name: Publish
+        run: mcp-publisher publish
+
+      - name: Verify the listing
+        run: |
+          sleep 5
+          curl -fsS "https://registry.modelcontextprotocol.io/v0/servers?search=instapods" \
+            | jq -e '.servers[] | select(.server.name == "com.instapods/instapods")'

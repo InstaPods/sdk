@@ -46,6 +46,7 @@ If you need to re-authenticate, remove the server from your config and re-add it
 | `get_pod` | Get details of a specific pod |
 | `create_pod` | Create a new pod |
 | `manage_pod` | Start, stop, restart, reload, or delete a pod |
+| `change_plan` | Upgrade or downgrade a pod's plan (CPU, memory, disk) |
 | `exec_command` | Run a shell command inside a pod |
 | `write_file` | Write or update files inside a pod |
 | `list_files` | List files in a pod directory |
@@ -54,6 +55,8 @@ If you need to re-authenticate, remove the server from your config and re-add it
 | `list_presets` | List available presets (static, php, nodejs, python) |
 | `list_plans` | List pricing plans |
 | `list_regions` | List deployment regions |
+| `list_feedback` | Read visitor feedback left on a pod's public preview, and whether collection is on |
+| `manage_feedback` | Turn the feedback widget on/off, set visibility, rotate the share token, triage a comment |
 
 ## Built-in Prompts
 
@@ -111,7 +114,9 @@ Claude: [Note: Database services are managed through the Dashboard or CLI —
 - The MCP server runs on `https://app.instapods.com/api/mcp`
 - All operations are scoped to your authenticated team
 - Commands run inside pods execute as the `instapod` user (not root)
-- File writes are restricted to `/home/instapod/`, `/var/www/`, and `/tmp/`
+- File writes are restricted to `/home/instapod/`, `/var/www/`, and `/tmp/`. Your app must live in
+  `/home/instapod/app` — that is the directory nginx serves on every preset. Writing to `/var/www/`
+  succeeds but is never served, so a static site put there keeps returning the placeholder page.
 - Database services (MySQL, PostgreSQL, Redis) are managed through the Dashboard or CLI
 
 ## Troubleshooting

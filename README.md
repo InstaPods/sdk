@@ -14,7 +14,7 @@ A skill that teaches Claude Code how to deploy and debug apps using the `instapo
 
 1. Install the CLI:
    ```bash
-   curl -fsSL https://raw.githubusercontent.com/instapods/sdk/main/cli/install.sh | bash
+   curl -fsSL https://instapods.com/install.sh | sh
    instapods auth login
    ```
 
@@ -71,6 +71,7 @@ The MCP server includes built-in prompts:
 ```
 sdk/
 ├── README.md                              # This file
+├── server.json                            # MCP Registry manifest (see below)
 ├── skills/
 │   ├── instapods-cli/
 │   │   └── SKILL.md                       # Skill for Claude Code (uses CLI)
@@ -82,11 +83,36 @@ sdk/
     └── README.md                          # CLI quick reference
 ```
 
+## MCP Registry
+
+InstaPods is listed in the official [MCP Registry](https://registry.modelcontextprotocol.io) as
+`com.instapods/instapods`. `server.json` in this repo is the source of truth for that listing:
+
+```bash
+curl -s "https://registry.modelcontextprotocol.io/v0/servers?search=instapods"
+```
+
+To publish an update, bump `version` in `server.json`, then push a matching tag:
+
+```bash
+git tag mcp-v1.1.0 && git push origin mcp-v1.1.0
+```
+
+That runs [`.github/workflows/publish-mcp-registry.yml`](.github/workflows/publish-mcp-registry.yml),
+which publishes via `mcp-publisher`. The registry rejects a version that already exists, so every
+publish needs a new `version`.
+
+Authentication is domain-based: the registry namespace `com.instapods/*` is proved by the Ed25519
+public key served at `https://instapods.com/.well-known/mcp-registry-auth`. The workflow signs with
+the matching private key from the `MCP_REGISTRY_PRIVATE_KEY` repo secret. GitHub OIDC is not an
+option here — it only grants the `io.github.*` namespace.
+
 ## Links
 
 - [InstaPods Dashboard](https://app.instapods.com)
 - [Documentation](https://docs.instapods.com)
-- [CLI Releases](https://github.com/instapods/instapods/releases)
+- [CLI Releases](https://github.com/InstaPods/sdk/releases)
+- [MCP Registry listing](https://registry.modelcontextprotocol.io/v0/servers?search=instapods)
 
 ## License
 
