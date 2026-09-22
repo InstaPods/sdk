@@ -279,7 +279,7 @@ To help the user set up a database:
 - **User context**: `exec_command` runs as the `instapod` user (not root).
 - **File paths**: Must be within `/home/instapod/`, `/var/www/`, or `/tmp/`.
 - **Port binding**: Node.js and Python apps MUST bind to `0.0.0.0` (not `127.0.0.1`). Use `process.env.PORT` for Node.js (default 3000), `0.0.0.0:8000` for Python.
-- **Reload vs restart**: `reload` reinstalls deps and restarts services. `restart` does a quick container restart without dep installation.
+- **Reload vs restart**: `reload` reinstalls deps and restarts services. `restart` does a quick pod restart without dep installation.
 - **Pod names**: DNS-safe, lowercase, max 63 characters. Letters, numbers, and hyphens only.
 - **No git or SSH tools**: Git deploys and SSH are available only via the CLI or Dashboard, not MCP.
 - **No service install tools**: Database services (mysql, postgresql, redis) must be installed via Dashboard or CLI.
