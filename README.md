@@ -2,7 +2,7 @@
 
 Tools and integrations for deploying and managing apps on [InstaPods](https://instapods.com) with AI assistants.
 
-InstaPods is container hosting for developers — deploy Node.js, Python, PHP, and static apps with a single command. This SDK provides two ways to integrate InstaPods with Claude:
+InstaPods is app hosting for developers — real Linux servers, one command. Deploy Node.js, Python, PHP, and static apps in seconds. This SDK provides two ways to integrate InstaPods with Claude:
 
 ## Integration Paths
 

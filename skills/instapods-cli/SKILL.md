@@ -451,6 +451,6 @@ instapods pods reload NAME
 - **User context**: Commands via `instapods exec` run as the `instapod` user (not root).
 - **`.env` handling**: Deploy excludes `.env` by default. Upload separately with `instapods files write`.
 - **Port binding**: Node.js and Python apps MUST bind to `0.0.0.0` (not `127.0.0.1`). Use `process.env.PORT` for Node.js, `0.0.0.0:8000` for Python.
-- **Reload vs restart**: `reload` reinstalls deps and restarts services. `restart` does a quick container restart without dep installation.
+- **Reload vs restart**: `reload` reinstalls deps and restarts services. `restart` does a quick pod restart without dep installation.
 - **Excluded files**: Deploy excludes `node_modules`, `vendor`, `.git`, `.env`, `__pycache__`, `.DS_Store`, `.venv`, `venv` by default. Customize with `--exclude`.
 - **Pod names**: DNS-safe, lowercase, max 63 characters. Letters, numbers, and hyphens only.
